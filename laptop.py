@@ -14,8 +14,8 @@ tunFD = None
 
 
 def tunRead(self):
-    data = read(tunFD)
     print("read some data from tun")
+    data = os.read(tunFD)
     return
 
 class MainWebSocketHandler(WebSocketHandler):
@@ -43,14 +43,19 @@ class MainWebSocketHandler(WebSocketHandler):
 if __name__ == "__main__":
     print("LaptopTetherServer Starting!")
     application = Application([ (r"/", MainWebSocketHandler), ])
-    application.listen(SERVER_PORT, address=SERVER_IP)
+    #application.listen(SERVER_PORT, address=SERVER_IP)
     application.listen(SERVER_PORT)
+    #map SERVER_IP to us on the ad-hoc network
     call("/sbin/ifconfig en1 inet 169.254.134.89 netmask 255.255.0.0 alias", shell=True)
+    # open tun device
     tunFD = os.open("/dev/tun0", os.O_RDWR)
+    #assign tun to 10.0.0.1
     call("ifconfig tun0 10.0.0.1 10.0.0.1 netmask 255.255.255.0 up", shell=True)
+    #modify the routing table to send EVERYTHING through TUN
     call("route delete default; sudo route add default 10.0.0.1", shell=True)
     ioLoop = IOLoop.instance()
     ioLoop.start()
     ioLoop.add_handler(tunFD, tunRead, events=ioLoop.READ )
+    print(os.read(tunFD))
 
     
