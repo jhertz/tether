@@ -9,8 +9,6 @@ SERVER_PORT = 6354
 
 
 
-#subprocess.call("ifconfig tun0 10.0.0.1 10.0.0.1 netmask 255.255.255.0 up", shell=True)
-#subprocess.call("route delete default; sudo route add default 10.0.0.1", shell=True)
 
 
 class MainWebSocketHandler(tornado.websocket.WebSocketHandler):
@@ -26,12 +24,17 @@ class MainWebSocketHandler(tornado.websocket.WebSocketHandler):
     def allow_draft76():
         return True;
     
+    def initialize(self):
+            print("LaptopTetherServer Starting!")
+            subprocess.call("/sbin/ifconfig en1 inet 169.254.134.89 netmask 255.255.0.0 alias", shell=True)
+            tunFD = os.open("/dev/tun0", os.O_RDWR)
+            #subprocess.call("ifconfig tun0 10.0.0.1 10.0.0.1 netmask 255.255.255.0 up", shell=True)
+            #subprocess.call("route delete default; sudo route add default 10.0.0.1", shell=True)
 
+   
 
 if __name__ == "__main__":
-    print("hi")
-    subprocess.call("/sbin/ifconfig en1 inet 169.254.134.89 netmask 255.255.0.0 alias", shell=True)
-    tunFD = os.open("/dev/tun0", os.O_RDWR)
     application = tornado.web.Application([ (r"/", MainWebSocketHandler), ])
     application.listen(SERVER_PORT, address=SERVER_IP)
     tornado.ioloop.IOLoop.instance().start()
+    
