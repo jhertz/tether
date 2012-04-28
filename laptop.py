@@ -1,22 +1,28 @@
+######
+# CS168 Final Project: Tether
+# Laptop Component
+# Must be run as root
+# @author: jhertz
+######
+
 from tornado.web import *
 from tornado.ioloop import *
 import tornado.ioloop
 from tornado.websocket import *
-from subprocess import *
+from subprocess import call
 import os
+import threading
 
 SERVER_IP = "169.254.134.89"
 SERVER_PORT = 6354
+BUFFER_SIZE = 1024
 
 
 tunFD = None
 
 
 
-def tunRead(self):
-    print("read some data from tun")
-    data = os.read(tunFD)
-    return
+
 
 class MainWebSocketHandler(WebSocketHandler):
     def open(self):
@@ -32,12 +38,15 @@ class MainWebSocketHandler(WebSocketHandler):
         print "WebSocket closed"
         
     def allow_draft76(self):
-        return True;
+        return True
     
-    def initialize(self):
-        return
 
-   
+
+class TunThread( threading.Thread):
+   def run(self):
+       while(True):
+           data = os.read(tunFD, BUFFER_SIZE)
+           print("got some data")
 
 
 if __name__ == "__main__":
@@ -53,9 +62,7 @@ if __name__ == "__main__":
     call("ifconfig tun0 10.0.0.1 10.0.0.1 netmask 255.255.255.0 up", shell=True)
     #modify the routing table to send EVERYTHING through TUN
     call("route delete default; sudo route add default 10.0.0.1", shell=True)
-    ioLoop = IOLoop.instance()
-    ioLoop.start()
-    ioLoop.add_handler(tunFD, tunRead, events=ioLoop.READ )
-    print(os.read(tunFD))
+    TunThread().start()
+    IOLoop.instance().start()
 
     
