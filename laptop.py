@@ -46,14 +46,14 @@ class TunThread( threading.Thread):
    def run(self):
        while(True):
            data = os.read(tunFD, BUFFER_SIZE)
-           print("got some data")
+           print("TUN data" , data)
 
 
 if __name__ == "__main__":
     print("LaptopTetherServer Starting!")
     application = Application([ (r"/", MainWebSocketHandler), ])
-    #application.listen(SERVER_PORT, address=SERVER_IP)
-    application.listen(SERVER_PORT)
+    application.listen(SERVER_PORT, address=SERVER_IP)
+    #application.listen(SERVER_PORT)
     #map SERVER_IP to us on the ad-hoc network
     call("/sbin/ifconfig en1 inet 169.254.134.89 netmask 255.255.0.0 alias", shell=True)
     # open tun device
