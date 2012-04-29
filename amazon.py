@@ -4,7 +4,7 @@ import tornado.web
 import tornado.ioloop
 import tornado.websocket
 
-AMAZON_IP = "10.190.122.124" #TODO IS THIS CORRECT?
+AMAZON_IP = "10.190.122.124"
 
 class RedirectWebSocketHandler(tornado.websocket.WebSocketHandler):
 	def open(self):
@@ -74,7 +74,7 @@ class RedirectWebSocketHandler(tornado.websocket.WebSocketHandler):
 		self.write_message(tempString)
 
 def mainLoop():
-	application = tornado.web.Application([ (r"/", MainWebSocketHandler), ])
+	application = tornado.web.Application([ (r"/", RedirectWebSocketHandler), ])
 	application.listen(SERVER_PORT, address=SERVER_IP)
 	tornado.ioloop.IOLoop.instance().start()
 
