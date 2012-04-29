@@ -21,7 +21,10 @@ class RedirectWebSocketHandler(tornado.websocket.WebSocketHandler):
 		sendPacket = processPacket(newPacket)
 		
 		#send the packet out to the web
-		#TODO ????
+		responsePacket = sr(sendPacket)
+		
+		#send the response back
+		sendPacketOnWebSocket(responsePacket)
 	
 	def on_close(self):
 		print "Redirect WebSocket closed"
@@ -70,9 +73,9 @@ class RedirectWebSocketHandler(tornado.websocket.WebSocketHandler):
 		#send the packet on the websocket
 		self.write_message(tempString)
 
-#def mainLoop():
-#	application = tornado.web.Application([ (r"/", MainWebSocketHandler), ])
-#	application.listen(SERVER_PORT, address=SERVER_IP)
-#	tornado.ioloop.IOLoop.instance().start()
-#
-#mainLoop()
+def mainLoop():
+	application = tornado.web.Application([ (r"/", MainWebSocketHandler), ])
+	application.listen(SERVER_PORT, address=SERVER_IP)
+	tornado.ioloop.IOLoop.instance().start()
+
+mainLoop()
