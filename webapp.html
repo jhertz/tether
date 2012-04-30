@@ -1,0 +1,14 @@
+<html>
+<head>
+<script>
+//var remote = "ws://ec2-50-19-32-33.compute-1.amazonaws.com:8080/";
+var local = "ws://169.254.134.89:6354/";
+var websocket = new WebSocket(local);
+websocket.send("Hello, world!");
+websocket.close();
+</script>
+</head>
+<body>
+Hello, world!
+</body>
+</html>
