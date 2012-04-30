@@ -1,11 +1,20 @@
+<!DOCTYPE HTML>
 <html>
 <head>
-<script>
+<script type="text/javascript">
 //var remote = "ws://ec2-50-19-32-33.compute-1.amazonaws.com:8080/";
 var local = "ws://169.254.134.89:6354/";
+//var local = "ws://127.0.0.1:6354/";
 var websocket = new WebSocket(local);
-websocket.send("Hello, world!");
-websocket.close();
+websocket.onopen = function(){
+	websocket.send("hi");
+}
+websocket.onmessage = function(evt)
+{
+	var recv_msg = evt.data;
+	alert("Recv Message: " + recv_msg);
+}
+websocket.onclose() = function(){}
 </script>
 </head>
 <body>
