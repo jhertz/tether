@@ -17,7 +17,7 @@ class ServerHandler(tornado.web.RequestHandler):
 		f.close()
 
 def mainLoop():
-	print "CHECKPOINT 1", "Listening on port", SERVER_PORT
+	print "Web App Server", "Listening on port", SERVER_PORT
 	application = tornado.web.Application([ (r"/", ServerHandler) ] )
 	application.listen(SERVER_PORT)
 	tornado.ioloop.IOLoop.instance().start()

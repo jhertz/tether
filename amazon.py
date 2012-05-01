@@ -75,7 +75,7 @@ class RedirectWebSocketHandler(tornado.websocket.WebSocketHandler):
 		self.write_message(tempString)
 
 def mainLoop():
-	print "Checkpoint 1: Listening on port", SERVER_PORT
+	print "AMAZON SERVER: Listening on port", SERVER_PORT
 	application = tornado.web.Application([ (r"/", RedirectWebSocketHandler), ])
 	application.listen(SERVER_PORT)
 	tornado.ioloop.IOLoop.instance().start()

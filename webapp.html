@@ -5,19 +5,16 @@
 var remote = "ws://ec2-50-19-32-33.compute-1.amazonaws.com:8080/";
 var local = "ws://169.254.134.89:6354/";
 //var local = "ws://127.0.0.1:6354/";
-/*var websocket = new WebSocket(local);
-//var allstrings = "";
+var websocket = new WebSocket(local);
 websocket.onopen = function(){
 	websocket.send("hi");
 }
 websocket.onmessage = function(evt)
 {
 	var recv_msg = evt.data;
-	//allstrings += "\n";
-	//allstrings += recv_msg;
-	document.write(recv_mg);
+	alert(recv_msg);
 }
-websocket.onclose() = function(){}*/
+websocket.onclose() = function(){}
 
 var websocket2 = new WebSocket(remote);
 websocket2.onopen = function(){
@@ -26,9 +23,7 @@ websocket2.onopen = function(){
 websocket2.onmessage = function(evt)
 {
 	var recv_msg = evt.data;
-	//allstrings += "\n";
-	//allstrings += recv_msg;
-	alert(recv_mg);
+	alert(recv_msg);
 }
 websocket2.onclose() = function(){}
 </script>

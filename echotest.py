@@ -14,17 +14,17 @@ class EchoWebSocket(tornado.websocket.WebSocketHandler):
 		print "WebSocket opened"
 	
 	def on_message(self, message):
-		print message
+		print "Recv:", message
 		self.write_message(u"You said: " + message)
 	
 	def on_close(self):
 		print "WebSocket closed"
 	
-	def allow_draft76():
+	def allow_draft76(self):
 		return True
 
 def mainLoop():
-	print "CHECKPOINT 1", "Listening on port", SERVER_PORT
+	print "ECHOTEST:", "Listening on port", SERVER_PORT
 	application = tornado.web.Application([ (r"/", EchoWebSocket), ])
 	application.listen(SERVER_PORT)
 	tornado.ioloop.IOLoop.instance().start()
