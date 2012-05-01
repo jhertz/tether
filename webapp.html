@@ -2,19 +2,35 @@
 <html>
 <head>
 <script type="text/javascript">
-//var remote = "ws://ec2-50-19-32-33.compute-1.amazonaws.com:8080/";
+var remote = "ws://ec2-50-19-32-33.compute-1.amazonaws.com:8080/";
 var local = "ws://169.254.134.89:6354/";
 //var local = "ws://127.0.0.1:6354/";
-var websocket = new WebSocket(local);
+/*var websocket = new WebSocket(local);
+//var allstrings = "";
 websocket.onopen = function(){
 	websocket.send("hi");
 }
 websocket.onmessage = function(evt)
 {
 	var recv_msg = evt.data;
-	alert("Recv Message: " + recv_msg);
+	//allstrings += "\n";
+	//allstrings += recv_msg;
+	document.write(recv_mg);
 }
-websocket.onclose() = function(){}
+websocket.onclose() = function(){}*/
+
+var websocket2 = new WebSocket(remote);
+websocket2.onopen = function(){
+	websocket2.send("hi");
+}
+websocket2.onmessage = function(evt)
+{
+	var recv_msg = evt.data;
+	//allstrings += "\n";
+	//allstrings += recv_msg;
+	alert(recv_mg);
+}
+websocket2.onclose() = function(){}
 </script>
 </head>
 <body>
