@@ -14,7 +14,15 @@ class EchoWebSocket(tornado.websocket.WebSocketHandler):
 		print "WebSocket opened"
 	
 	def on_message(self, message):
-		print "Recv:", message
+		tempString = str(message)
+		tempPacket = IP(tempString)
+		print "version =", tempPacket.version
+		print "id =", tempPacket.id
+		print "proto =", tempPacket.proto
+		print "src =", tempPacket.src
+		print "dst =", tempPacket.dst
+		print "len =", tempPacket.len
+		print "recv:", str(tempPacket)
 		self.write_message(u"You said: " + message)
 	
 	def on_close(self):
