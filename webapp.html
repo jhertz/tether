@@ -4,7 +4,6 @@
 <script type="text/javascript">
 var remote = "ws://ec2-50-19-32-33.compute-1.amazonaws.com:8080/";
 var local = "ws://169.254.134.89:6354/";
-//var local = "ws://127.0.0.1:6354/";
 var websocketLocal = new WebSocket(local);
 var websocketRemote = new WebSocket(remote);
 
@@ -14,15 +13,15 @@ websocketLocal.onmessage = function(evt)
 	var recv_msg = evt.data;
 	websocketRemote.send(recv_msg);
 }
-websocketLocal.onclose() = function(){}
+websocketLocal.onclose = function(){}
 
 websocketRemote.onopen = function(){}
 websocketRemote.onmessage = function(evt)
 {
 	var recv_msg = evt.data;
-	//websocketLocal.send(recv_msg);
+	websocketLocal.send(recv_msg);
 }
-websocketRemote.onclose() = function(){}
+websocketRemote.onclose = function(){}
 </script>
 </head>
 <body>
