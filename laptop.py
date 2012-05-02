@@ -8,15 +8,14 @@
 
 
 #imports
-from tornado.web import *
-from tornado.ioloop import *
+from tornado.web import Application
+from tornado.ioloop import IOLoop
 import tornado.ioloop
-from tornado.websocket import *
+from tornado.websocket import WebSocketHandler
 from subprocess import call
 import os
 from threading import Thread
-import sys
-
+import base64
 #constants
 SERVER_IP = "169.254.134.89"
 SERVER_PORT = 6354
@@ -28,8 +27,6 @@ BUFFER_SIZE = 1024
 #the WebSocket handler
 class MainWebSocketHandler(WebSocketHandler):
     def open(self):
-        #map SERVER_IP to us on the ad-hoc network
-        call("/sbin/ifconfig en1 inet 169.254.134.89 netmask 255.255.0.0 alias", shell=True)
         # open tun device
         tunFD = os.open("/dev/tun0", os.O_RDWR)
         #assign tun to 10.0.0.1
@@ -60,7 +57,9 @@ class MainWebSocketHandler(WebSocketHandler):
         return True
     
     def processTunData(self, data):
-        self.write_message(data) 
+        encodedData = base64.b64encode(data)
+        print "writing data from TUN to websocket"
+        self.write_message(encodedData) 
         return
     
 
@@ -70,7 +69,7 @@ class MainWebSocketHandler(WebSocketHandler):
 def tunTask(webSocket, tunFD):
        while(True):
            data = os.read(tunFD, BUFFER_SIZE)
-           print("read some TUN data" , data)
+          #print("read some TUN data" , data)
            webSocket.processTunData(data)
 
 
@@ -78,10 +77,13 @@ def tunTask(webSocket, tunFD):
 #main entry point
 if __name__ == "__main__":
     print("LaptopTetherServer Starting!\n")
+     #map SERVER_IP to us on the ad-hoc network
+    call("/sbin/ifconfig en1 inet 169.254.134.89 netmask 255.255.0.0 alias", shell=True)
     application = Application([ (r"/", MainWebSocketHandler), ])
     #application.listen(SERVER_PORT, address=SERVER_IP) 
     application.listen(SERVER_PORT)  
     IOLoop.instance().start() #this call blocks, so it must be made last...
+    
 
    
         
