@@ -1,34 +1,43 @@
 ######
 # CS168 Final Project: Tether
 # Laptop Component
-# Must be run as root
+# Must be run as root on an OSX system
 # @author: jhertz
 # @requires: tornado
+# @requires: TunTap
 ######
 
 
 #imports
 from tornado.web import Application
 from tornado.ioloop import IOLoop
-import tornado.ioloop
 from tornado.websocket import WebSocketHandler
 from subprocess import call
-import os
 from threading import Thread
+import os
 import base64
+
 #constants
 SERVER_IP = "169.254.134.89"
 SERVER_PORT = 6354
-BUFFER_SIZE = 1024
+BUFFER_SIZE = 10240
 
 
 
 
 #the WebSocket handler
 class MainWebSocketHandler(WebSocketHandler):
+    
+    #fields
+    tunFD = None
+    
+    #methods:
+    
+    #opens the tun device, makes some syscalls, start the TUN polling thread
     def open(self):
         # open tun device
         tunFD = os.open("/dev/tun0", os.O_RDWR)
+        self.tunFD = tunFD
         #assign tun to 10.0.0.1
         call("ifconfig tun0 10.0.0.1 10.0.0.1 netmask 255.255.255.0 up", shell=True)
         #modify the routing table to send EVERYTHING through TUN
@@ -39,16 +48,14 @@ class MainWebSocketHandler(WebSocketHandler):
         thread.start()
         print "WebSocket opened"
         
-
+    #okay, we got some data off the websocket, we need to decode it, and pipe it into the TUN device
     def on_message(self, message):
-        #okay, we got some data off the websocket, we need to pipe it into the TUN device
-       # os.write(tunFD, message)
-       #print "got message:" , message
-       #self.write_message(message)
-       return
-   
+        #print "got message from server"
+        decodedData = base64.b64decode(message)
+        os.write(self.tunFD, decodedData)
    
 
+    #called on close
     def on_close(self):
         theWebSocket = None
         print "WebSocket closed"
@@ -56,9 +63,10 @@ class MainWebSocketHandler(WebSocketHandler):
     def allow_draft76(self):
         return True
     
+    #encode the data and write it to the websockets
     def processTunData(self, data):
         encodedData = base64.b64encode(data)
-        print "writing data from TUN to websocket"
+        #print "writing data from TUN to websocket"
         self.write_message(encodedData) 
         return
     
@@ -80,10 +88,5 @@ if __name__ == "__main__":
      #map SERVER_IP to us on the ad-hoc network
     call("/sbin/ifconfig en1 inet 169.254.134.89 netmask 255.255.0.0 alias", shell=True)
     application = Application([ (r"/", MainWebSocketHandler), ])
-    #application.listen(SERVER_PORT, address=SERVER_IP) 
-    application.listen(SERVER_PORT)  
+    application.listen(SERVER_PORT)  #binding to the port worked fine, we didn't need to bind to the address too
     IOLoop.instance().start() #this call blocks, so it must be made last...
-    
-
-   
-        
