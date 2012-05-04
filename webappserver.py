@@ -11,6 +11,7 @@ SERVER_PORT = 80
 
 class ServerHandler(tornado.web.RequestHandler):
 	def get(self):
+		print "GETTING"
 		f = open('webapp.html', 'r')
 		for line in f:
 			self.write(line)

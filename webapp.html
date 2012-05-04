@@ -14,6 +14,7 @@ websocketLocal.onmessage = function(evt)
 	websocketRemote.send(recv_msg);
 }
 websocketLocal.onclose = function(){}
+websocketLocal.binaryType = "arraybuffer";
 
 websocketRemote.onopen = function(){}
 websocketRemote.onmessage = function(evt)
@@ -22,6 +23,7 @@ websocketRemote.onmessage = function(evt)
 	websocketLocal.send(recv_msg);
 }
 websocketRemote.onclose = function(){}
+websocketRemote.binaryType = "arraybuffer";
 </script>
 </head>
 <body>
